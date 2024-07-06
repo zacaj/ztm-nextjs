@@ -81,10 +81,13 @@ declare global {
     nonOxford(last: string): string;
     insert(value: T, where: (before: T) => boolean): number;
     shuffle(rand?: () => number, times?: number): this;
-    random<T>(this: T[], rand?: () => number): T;
+    shuffled(rand?: () => number, times?: number): this;
+    random(this: T[], rand?: () => number): T;
     sum(conv?: (val: T, index: number) => number): number;
     rotate(amount: number): this;
     truthy(): Array<NonNullable<T>>;
+    copy(): this;
+    slit(start: number, size: number): this;
   }
 
   interface String {
@@ -172,6 +175,15 @@ Array.prototype.rotate = function<T>(this: T[], amount: number): T[] {
 };
 Array.prototype.truthy = function<T>(this: T[]): NonNullable<T>[] {
   return this.filter(x => !!x) as NonNullable<T>[];
+};
+Array.prototype.copy = function<T>(this: T[]): T[] {
+  return this.slice();
+};
+Array.prototype.shuffled = function<T>(this: T[]): T[] {
+  return this.slice().shuffle();
+};
+Array.prototype.slit = function<T>(this: T[], start: number, size: number): T[] {
+  return this.slice(start, start+size);
 };
 // polyfill flatmap for jest
 if (!Array.prototype.flatMap) {
@@ -304,27 +316,27 @@ export function getFuncNames<T extends {}>(toCheck: T): ((keyof T)&string)[] {
   ) as ((keyof T)&string)[];
 }
 
-export function getCallerStack(ignoreCurFile = false, ignorePattern?: RegExp, force = false): string[] {
-  if (!require('./log').Log.files.trace && !force) return [];
-  const err = new Error();
-  const lines = err.stack!.split('\n').slice(3);
-  const imm_caller_line = lines[0];
-  const file = (imm_caller_line.match(/([^/\\]+\.js)/) ?? [])[0];
-  const caller_line_index = lines.findIndex(l => (!file || !ignoreCurFile || (ignoreCurFile && !l.includes(file))) && (!ignorePattern || !l.match(ignorePattern)));
+// export function getCallerStack(ignoreCurFile = false, ignorePattern?: RegExp, force = false): string[] {
+//   if (!require('./log').Log.files.trace && !force) return [];
+//   const err = new Error();
+//   const lines = err.stack!.split('\n').slice(3);
+//   const imm_caller_line = lines[0];
+//   const file = (imm_caller_line.match(/([^/\\]+\.js)/) ?? [])[0];
+//   const caller_line_index = lines.findIndex(l => (!file || !ignoreCurFile || (ignoreCurFile && !l.includes(file))) && (!ignorePattern || !l.match(ignorePattern)));
 
-  const callers = caller_line_index === -1? [imm_caller_line] : lines.slice(caller_line_index, caller_line_index+3);
-  return callers;
-}
+//   const callers = caller_line_index === -1? [imm_caller_line] : lines.slice(caller_line_index, caller_line_index+3);
+//   return callers;
+// }
 
-export function getCallerLine(): string {
-  const imm = getCallerStack(false, undefined, true)[1];
-  return (imm.match(/([^/\\]+\.js[\d:]*)/) ?? [])[0]!;
-}
+// export function getCallerLine(): string {
+//   const imm = getCallerStack(false, undefined, true)[1];
+//   return (imm.match(/([^/\\]+\.js[\d:]*)/) ?? [])[0]!;
+// }
 
-export function getCallerLoc(ignoreCurFile = false, ignorePattern?: RegExp, force = false): string {
-  const callers = getCallerStack(ignoreCurFile, ignorePattern, force);
-  return callers.map(l => split(l, 'at')[1] || l).join(' <- ');
-}
+// export function getCallerLoc(ignoreCurFile = false, ignorePattern?: RegExp, force = false): string {
+//   const callers = getCallerStack(ignoreCurFile, ignorePattern, force);
+//   return callers.map(l => split(l, 'at')[1] || l).join(' <- ');
+// }
 export function then<T, U = undefined>(val: Promise<T>|T, cb: (x: T|Error) => U): Promise<U>|U {
   if ((val as any).then) return (val as Promise<T>).then(cb).catch(cb);
   return cb(val as T);

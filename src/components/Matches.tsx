@@ -1,11 +1,11 @@
 'use client';
 
-import { devFinishAll, getMatches } from "@/apis/tournament.api";
+import { getMatches, devUpdate, nextRound } from '@/apis/tournament.api';
 import { FC, FCn, FlexCol, FlexRow, Loading, style } from "@/util/react";
 import { useGet } from "@/util/rest";
 import { Match_ } from "@/util/types";
 import { SpinnerIcon } from "@chakra-ui/icons";
-import { Button, ButtonGroup, Flex, Grid, GridItem, HStack, SimpleGrid, VStack } from "@chakra-ui/react";
+import { Button, ButtonGroup, Flex, Grid, GridItem, HStack, SimpleGrid, Spacer, VStack } from "@chakra-ui/react";
 import { Match, Tournament } from "@prisma/client";
 import useSWR from "swr";
 
@@ -38,8 +38,36 @@ export const Matches: FCn<{ tour: Tournament }> = ({ tour }) => {
       <ButtonGroup size='sm'>
         <Button onClick={() => refresh()} leftIcon={<SpinnerIcon/>} isLoading={isLoading}>Refresh</Button>
       </ButtonGroup>
+      <Spacer/>
       <ButtonGroup size='sm'>
-        <Button onClick={() => void devFinishAll(tour.id).then(refresh)} isDisabled={!inProgress?.length}>Finish All</Button>
+        <Button onClick={() => void devUpdate('match', {
+          where: {
+            tournamentId: tour.id,
+            completed: null,
+          },
+          data: {
+            completed: new Date(),
+            finishOrder: [1, 2, 3, 4],
+          },
+        }).then(refresh)} isDisabled={!inProgress?.length}
+        >Finish All</Button>
+        <Button onClick={() => void devUpdate('match', {
+          where: {
+            tournamentId: tour.id,
+            completed: { not: null },
+          },
+          data: {
+            completed: null,
+            finishOrder: [0, 0, 0, 0],
+          },
+        }).then(refresh)} isDisabled={!completed?.length}
+        >Unfinish All</Button>
+      </ButtonGroup>
+      <Spacer/>
+      <ButtonGroup size="sm">
+        {tour.type === 'MATCHPLAY' && !inProgress?.length &&
+          <Button onClick={() => void nextRound(tour.id).then(refresh)}>Next Round</Button>
+        }
       </ButtonGroup>
     </HStack>
     {matches?.length?

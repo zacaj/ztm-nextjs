@@ -31,7 +31,9 @@ model Player {
   tournamentId BigInt
   name         String
 
-  ifpa String?
+  ifpa    String?
+  enabled Boolean @default(true)
+  deleted Boolean @default(false)
 
   matches Match[]
 }
