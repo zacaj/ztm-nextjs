@@ -16,6 +16,7 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
+    "target": "ESNext",
     "plugins": [
       {
         "name": "next"
@@ -28,16 +29,24 @@
     },
     "noImplicitReturns": false, /* Report error when not all code paths in function return a value. */
     "noFallthroughCasesInSwitch": true, /* Report errors for fallthrough cases in switch statement. */
-    "noImplicitOverride": true
+    "noImplicitOverride": true,
+  },
+  "ts-node": {
+    // "esm": true,
+    // "experimentalSpecifierResolution": "node",
+    "compilerOptions": {
+      "module": "CommonJS"
+    }
   },
   // "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  // "exclude": [
+  //   "node_modules"
+  // ],
+  "include": [
+    "**/*",
+    ".next/types/**/*.ts"
+  ],
   "exclude": [
     "node_modules"
-  ],
-  "include": [
-    "next-env.d.ts",
-    ".next/types/**/*.ts",
-    "**/*.ts",
-    "**/*.tsx"
   ]
 }

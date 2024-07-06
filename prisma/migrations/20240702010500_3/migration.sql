@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "Game" ADD COLUMN     "deleted" BOOLEAN NOT NULL DEFAULT false,
+ADD COLUMN     "enabled" BOOLEAN NOT NULL DEFAULT true,
+ALTER COLUMN "categories" SET DEFAULT ARRAY[]::TEXT[];

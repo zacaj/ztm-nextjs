@@ -7,10 +7,22 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum TournamentType {
+  FRENZY
+  MATCHPLAY
+}
+
 model Tournament {
-  id     BigInt   @id @default(autoincrement())
-  name   String
-  Player Player[]
+  id   BigInt @id @default(autoincrement())
+  name String
+
+  type          TournamentType
+  maxPlayers    Int
+  gamesPerRound Int            @default(1)
+
+  players Player[]
+  games   Game[]
+  matches Match[]
 }
 
 model Player {
@@ -18,5 +30,39 @@ model Player {
   tournament   Tournament @relation(fields: [tournamentId], references: [id])
   tournamentId BigInt
   name         String
-  ifpa         String
+
+  ifpa String?
+
+  matches Match[]
+}
+
+model Game {
+  id           BigInt     @id @default(autoincrement())
+  tournament   Tournament @relation(fields: [tournamentId], references: [id])
+  tournamentId BigInt
+  name         String
+
+  categories String[] @default([])
+  enabled    Boolean  @default(true)
+  deleted    Boolean  @default(false)
+
+  matches Match[]
+}
+
+model Match {
+  id           BigInt     @id @default(autoincrement())
+  Tournament   Tournament @relation(fields: [tournamentId], references: [id])
+  tournamentId BigInt
+
+  game    Game     @relation(fields: [gameId], references: [id])
+  players Player[]
+
+  started     DateTime  @default(now())
+  completed   DateTime?
+  finishOrder Int[]     @default([0, 0, 0, 0])
+
+  roundNum Int?
+  gameNum  Int?
+
+  gameId BigInt
 }

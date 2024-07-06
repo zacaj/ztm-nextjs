@@ -5,7 +5,7 @@ import { ChakraProvider } from '@chakra-ui/react';
 import StyledComponentsRegistry from "@/util/registry";
 import styled from "styled-components";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"]});
 
 export const metadata: Metadata = {
   title: "Create Next App",

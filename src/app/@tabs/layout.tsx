@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { PropsWithChildren } from "react";
 import Link from "next/link";
 
-export default async function({ params: {id}, children }: PropsWithChildren<{ params: { id: number } }>) {
+export default async function({ params: { id }, children }: PropsWithChildren<{ params: { id: number } }>) {
 
   return (
     <>

@@ -9,21 +9,21 @@
     "plugin:react/recommended",
     "plugin:react-hooks/recommended",
     "next/core-web-vitals"
- ],
+  ],
   "plugins": [
     "@typescript-eslint",
     "react-hooks",
     "@stylistic"
- ],
+  ],
   "parserOptions": {
-    "ecmaVersion": 2018, // Allows for the parsing of modern ECMAScript features
+    // "ecmaVersion": 2018, // Allows for the parsing of modern ECMAScript features
     "sourceType": "module", // Allows for the use of imports
     "project": "./tsconfig.json"
   },
   "ignorePatterns": [
     "node_modules/",
     "database/migration/**/*"
- ],
+  ],
   "env": {
     "node": true,
     "es6": true,
@@ -43,7 +43,7 @@
           "requireLast": false
         }
       }
-   ],
+    ],
     "@typescript-eslint/no-array-constructor": "warn",
     "@typescript-eslint/no-extra-non-null-assertion": "warn",
     "@typescript-eslint/no-floating-promises": [
@@ -51,7 +51,7 @@
       {
         "ignoreVoid": true
       }
-   ],
+    ],
     "@typescript-eslint/no-for-in-array": "warn",
     "@typescript-eslint/no-misused-new": "warn",
     "@typescript-eslint/no-unused-expressions": "off",
@@ -73,7 +73,7 @@
       {
         "omitLastInOneLineBlock": false
       }
-   ],
+    ],
     "@typescript-eslint/space-before-function-paren": [
       "warn",
       {
@@ -81,7 +81,7 @@
         "anonymous": "never",
         "named": "never"
       }
-   ],
+    ],
     "@typescript-eslint/type-annotation-spacing": "warn",
     "@typescript-eslint/unbound-method": "off",
     "@typescript-eslint/unified-signatures": "warn",
@@ -96,7 +96,7 @@
     "eqeqeq": "warn",
     "no-invalid-this": "off",
     "no-loop-func": "off",
-    "no-return-await": "warn",
+    // "no-return-await": "warn",
     "no-return-assign": "off",
     "no-self-compare": "warn",
     "no-sequences": "warn",
@@ -113,7 +113,7 @@
         "functions": false,
         "classes": false
       }
-   ],
+    ],
     "no-undefined": "off",
     "no-undef": "off",
     "no-unused-vars": "off",
@@ -127,7 +127,7 @@
         "exports": "always-multiline",
         "functions": "always-multiline"
       }
-   ],
+    ],
     "func-call-spacing": "warn",
     "keyword-spacing": "warn",
     "linebreak-style": "off",
@@ -139,13 +139,13 @@
         "ignoreComments": true,
         "ignorePattern": "^import.*"
       }
-   ],
+    ],
     "max-params": [
       "off",
       {
         "max": 6
       }
-   ],
+    ],
     "newline-per-chained-call": "off",
     "no-nested-ternary": "off",
     "no-new-object": "warn",
@@ -156,33 +156,33 @@
       {
         "defaultAssignment": false
       }
-   ],
+    ],
     "no-whitespace-before-property": "warn",
     "one-var": [
       "warn",
       "never"
-   ],
+    ],
     "quotes": [
       "off",
       "single"
-   ],
+    ],
     "semi": "off", // overridden by typescript rule
     "space-before-function-paren": "off", // overridden by typescript rule
     "space-before-blocks": [
       "warn",
       "always"
-   ],
+    ],
     "space-in-parens": [
       "warn",
       "never"
-   ],
+    ],
     "space-unary-ops": [
       "warn",
       {
         "words": true,
         "nonwords": false
       }
-   ],
+    ],
     "arrow-spacing": "warn",
     "no-const-assign": "warn",
     "no-dupe-class-members": "warn",
@@ -203,14 +203,91 @@
     "react/display-name": "off",
     "import/no-anonymous-default-export": "off",
     // auto format
-    "react/jsx-indent": ["warn", 2],
-    "react/jsx-indent-props": ["warn", 2],
-    "react/jsx-max-props-per-line": ["warn", { "maximum": 3 }],
-    "react/jsx-one-expression-per-line": ["warn", { "allow": "non-jsx" }],
-    "react/jsx-tag-spacing": ["warn", { "beforeSelfClosing": "proportional-always" }],
-    "react/jsx-props-no-multi-spaces": ["warn"],
-    "react/jsx-no-leaked-render": ["warn"],
-    "react/jsx-closing-bracket-location": ["warn", "tag-aligned"],
-    "@stylistic/indent": ["warn", 2]
+    "react/jsx-indent": [
+      "warn",
+      2
+    ],
+    "react/jsx-indent-props": [
+      "warn",
+      2
+    ],
+    "react/jsx-max-props-per-line": [
+      "warn",
+      {
+        "maximum": 3
+      }
+    ],
+    "react/jsx-one-expression-per-line": [
+      "warn",
+      {
+        "allow": "non-jsx"
+      }
+    ],
+    "react/jsx-tag-spacing": [
+      "warn",
+      {
+        "beforeSelfClosing": "never"
+      }
+    ],
+    "react/jsx-props-no-multi-spaces": [
+      "warn"
+    ],
+    "react/jsx-no-leaked-render": [
+      "warn"
+    ],
+    "react/jsx-closing-bracket-location": [
+      "warn",
+      "tag-aligned"
+    ],
+    "@stylistic/indent": [
+      "warn",
+      2
+    ],
+    "@stylistic/block-spacing": [
+      "warn"
+    ],
+    "@stylistic/object-curly-spacing": [
+      "warn",
+      "always",
+      {
+        "arraysInObjects": false,
+        "objectsInObjects": false
+      }
+    ],
+    "@stylistic/no-whitespace-before-property": [
+      "warn"
+    ],
+    "@stylistic/object-property-newline": [
+      "warn",
+      {
+        "allowAllPropertiesOnSameLine": true
+      }
+    ],
+    "@stylistic/no-multi-spaces": [
+      "warn",
+      {
+        "ignoreEOLComments": true
+      }
+    ],
+    "@stylistic/space-before-blocks": ["warn"],
+    "@stylistic/function-call-spacing": ["warn"],
+    "@stylistic/arrow-spacing": ["warn"],
+    "@stylistic/comma-spacing": ["warn"],
+    "@stylistic/array-bracket-spacing": ["warn"],
+    "@stylistic/keyword-spacing": ["warn"],
+    "@stylistic/space-in-parens": ["warn"],
+    "@stylistic/no-trailing-spaces": ["warn"],
+    "@stylistic/key-spacing": ["warn"],
+    "@stylistic/computed-property-spacing": ["warn"],
+    "@stylistic/template-curly-spacing": ["warn"],
+    "@stylistic/switch-colon-spacing": ["warn"],
+    "@stylistic/semi-spacing": ["warn"],
+    "@stylistic/rest-spread-spacing": ["warn"],
+    "@stylistic/space-before-function-paren": ["warn", {
+      "anonymous": "never",
+      "named": "never",
+      "asyncArrow": "always"
+    }],
+    "@stylistic/space-unary-ops": ["warn", {"words": true, "nonwords": false}]
   }
 }
