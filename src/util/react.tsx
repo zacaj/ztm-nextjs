@@ -1,27 +1,26 @@
 
-import styled from "styled-components";
 import { styled as cstyled, Flex, Spinner, SystemStyleObject } from "@chakra-ui/react";
-import { FC as _FC, PropsWithChildren } from "react";
-import { CSSProperties, PropsWithChildren } from 'react';
+import { FC as _FC, CSSProperties, PropsWithChildren, useCallback, useEffect, useState } from "react";
+import styled from "styled-components";
 
 type FlexProps = PropsWithChildren<
   Pick<
     CSSProperties,
-    | 'alignItems'
-    | 'justifyContent'
-    | 'flexBasis'
-    | 'flexGrow'
-    | 'flexWrap'
-    | 'gap'
+    | `alignItems`
+    | `justifyContent`
+    | `flexBasis`
+    | `flexGrow`
+    | `flexWrap`
+    | `gap`
   > & {
     className?: string | undefined;
     style?: CSSProperties | undefined;
   }
 >;
-const FlexDiv = (props: FlexProps & Pick<CSSProperties, 'flexDirection'>) => {
+const FlexDiv = (props: FlexProps & Pick<CSSProperties, `flexDirection`>) => {
   return (
     <div
-      style={{ ...props.style, ...props, display: 'flex' }}
+      style={{ ...props.style, ...props, display: `flex` }}
       className={props.className}
     >
       {props.children}
@@ -39,8 +38,8 @@ export const FlexCol = (props: FlexProps) => (
 
 const Title = cstyled(Flex, {
   baseStyle: {
-    color: 'red',
-    background: 'blue',
+    color: `red`,
+    background: `blue`,
   },
 });
 
@@ -51,24 +50,24 @@ const Title3 = styled(Flex)`
 
 // const FlexRow =
 
-const Test = ({ x, y }: { x: number; y: "row" }) => <span>X: {x}</span>;
-export const TestC = ({ x, y, className }: { x: number; y: "row"; className?: string }) => <span className={className}>X: {x}</span>;
+const Test = ({ x, y }: { x: number; y: `row` }) => <span>X: {x}</span>;
+export const TestC = ({ x, y, className }: { x: number; y: `row`; className?: string }) => <span className={className}>X: {x}</span>;
 
 export function style<
   PC extends { className?: string },
   PDefault extends Partial<PC>,
-  PRemaining = Partial<PDefault> & Omit<PC, keyof PDefault | 'className'> & { className?: string },
+  PRemaining = Partial<PDefault> & Omit<PC, keyof PDefault | `className`> & { className?: string },
 >(c: React.ElementType<PC>, style: SystemStyleObject, defaultProps?: PDefault) {
   const Component = cstyled<React.ElementType<PC>, any>(c, { baseStyle: style });
   return (props: PRemaining) => <Component className="" {...defaultProps} {...props}/>;
 }
 
-const Test1 = style(Test, { color: "red", background: "green" }, { x: 4 });
-const Test3 = style(TestC, { color: "red", background: "green" }, { x: 4 });
-const Div1 = style('div', { background: 'orange' }, {});
-const Test2 = style(Test1, { color: 'pink' }, { x: 7, y: "row" });
-const Test4 = style(Test3, { color: 'pink' }, { x: 7, y: "row" });
-const Title4 = style(Flex, { color: "red", background: "green", bad: 3 }, { direction: "rowf", bad: 4 });
+const Test1 = style(Test, { color: `red`, background: `green` }, { x: 4 });
+const Test3 = style(TestC, { color: `red`, background: `green` }, { x: 4 });
+const Div1 = style(`div`, { background: `orange` }, {});
+const Test2 = style(Test1, { color: `pink` }, { x: 7, y: `row` });
+const Test4 = style(Test3, { color: `pink` }, { x: 7, y: `row` });
+const Title4 = style(Flex, { color: `red`, background: `green`, bad: 3 }, { direction: `rowf`, bad: 4 });
 // type FP = ComponentPropsWithoutRef<typeof Flex>;
 
 
@@ -98,3 +97,49 @@ export type FCcn<P extends {}> = FCn<PropsWithChildren<P>>;
 
 
 export const Loading = Spinner;
+
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+export function useQueryParam<T = string>(key: string, transform: (value: string) => T = x => x as any):
+[T | undefined, (value: T|undefined) => void] {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+
+  const [value, setValue] = useState<T>();
+
+  useEffect(() => {
+    const raw = searchParams.get(key);
+    if (!raw) {
+      if (value)
+        setValue(undefined);
+    }
+    else {
+      const newValue = transform(raw);
+      if (value !== newValue)
+        setValue(newValue);
+    }
+  }, [key, searchParams, transform, value]);
+
+  // Get a new searchParams string by merging the current
+  // searchParams with a provided key/value pair
+  const createQueryString = useCallback(
+    (name: string, value: string | undefined) => {
+      const params = new URLSearchParams(searchParams.toString());
+      if (`${value}` !== `${undefined}`)
+        params.set(name, value!);
+      else
+        params.delete(name);
+
+      return params.toString();
+    },
+    [searchParams],
+  );
+
+  return [
+    value,
+    (value) => {
+      // router.push(pathname + `?` + createQueryString(key, `${value}`), {});
+      window.history.pushState(null, ``, `?` + createQueryString(key, `${value}`).toString());
+    },
+  ];
+}

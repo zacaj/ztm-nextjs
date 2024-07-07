@@ -55,13 +55,14 @@
     "@typescript-eslint/no-for-in-array": "warn",
     "@typescript-eslint/no-misused-new": "warn",
     "@typescript-eslint/no-unused-expressions": "off",
-    "@typescript-eslint/prefer-for-of": "off",
+    "@typescript-eslint/prefer-for-of": "warn",
     "@typescript-eslint/prefer-includes": "warn",
     "@typescript-eslint/prefer-nullish-coalescing": "warn",
     "@typescript-eslint/prefer-optional-chain": "warn",
     "@typescript-eslint/prefer-string-starts-ends-with": "off",
     "@typescript-eslint/require-array-sort-compare": "warn",
     "@typescript-eslint/restrict-plus-operands": "off",
+    "@typescript-eslint/no-unnecessary-condition": "warn",
     // "@typescript-eslint/restrict-template-expressions": ["warn", {
     // 	"allowNumber": true,
     // 	"allowBoolean": true,
@@ -196,15 +197,20 @@
     "react-hooks/exhaustive-deps": "warn",
     "react/button-has-type": "warn",
     "react/hook-use-state": "warn",
+    "@typescript-eslint/no-unnecessary-type-constraint": "warn",
+    "@typescript-eslint/no-non-null-asserted-optional-chain": "warn",
     // "unused-vars": ["warn", {
     // args: "all",
     // caughtErrors: "all",
     // }],
     "react/display-name": "off",
     "import/no-anonymous-default-export": "off",
+
+
+
     // auto format
     "react/jsx-indent": [
-      "warn",
+      "off",
       2
     ],
     "react/jsx-indent-props": [
@@ -244,7 +250,7 @@
       2
     ],
     "@stylistic/block-spacing": [
-      "warn"
+      "off"
     ],
     "@stylistic/object-curly-spacing": [
       "warn",
@@ -282,6 +288,7 @@
     "@stylistic/template-curly-spacing": ["warn"],
     "@stylistic/switch-colon-spacing": ["warn"],
     "@stylistic/semi-spacing": ["warn"],
+    "@stylistic/quotes": ["warn", "backtick"],
     "@stylistic/rest-spread-spacing": ["warn"],
     "@stylistic/space-before-function-paren": ["warn", {
       "anonymous": "never",

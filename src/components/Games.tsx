@@ -1,34 +1,37 @@
 "use client";
+import { addGame, editGame } from "@/apis/tournament.api";
+import { EditableText } from "@/util/EditableText";
 import { FCn } from "@/util/react";
 import { TourBase } from "@/util/types";
+import { AddIcon, DeleteIcon, LockIcon, SpinnerIcon, UnlockIcon } from "@chakra-ui/icons";
 import {
-  Table,
-  Thead,
-  Tbody,
-  Tfoot,
-  Tr,
-  Th,
-  Td,
-  TableCaption,
-  TableContainer,
-  HStack,
   Button,
+  ButtonGroup, FormControl,
+  FormErrorMessage,
+  FormLabel,
+  HStack,
   IconButton,
-  useDisclosure,
+  Input,
   Modal,
   ModalBody,
   ModalCloseButton,
   ModalContent,
   ModalFooter,
   ModalHeader,
-  ModalOverlay, ButtonGroup, FormControl, FormLabel, Input, FormErrorMessage, Spacer,
+  ModalOverlay,
+  Spacer,
+  Table,
+  TableContainer,
+  Tbody,
+  Td,
+  Th,
+  Thead,
+  Tr,
+  useDisclosure,
 } from '@chakra-ui/react';
-import { EditableText } from "@/util/EditableText";
-import { useRouter } from "next/navigation";
-import { addGame, editGame } from "@/apis/tournament.api";
-import { AddIcon, DeleteIcon, SpinnerIcon } from "@chakra-ui/icons";
-import { useMemo, useRef, useState } from "react";
 import { Field, Formik } from "formik";
+import { useRouter } from "next/navigation";
+import { useMemo, useRef, useState } from "react";
 
 export const Games: FCn<{ tour: TourBase }> = ({ tour }) => {
   const { refresh } = useRouter();
@@ -67,14 +70,32 @@ export const Games: FCn<{ tour: TourBase }> = ({ tour }) => {
         <Tbody>
           {games.filter(g => !filter || g.categories.includes(filter)).map(g => <Tr key={g.id} role="group">
             <Td>
-              <EditableText value={g.name} onSave={v => void editGame({ ...g, name: v }).then(() => refresh())} startOpen={!g.id}/>
-            </Td>
-            <Td>{g.categories.join(', ')}</Td>
-            <Td>
-              <IconButton aria-label="Delete" icon={<DeleteIcon/>} size="sm"
-                onClick={() => {} }
-                sx={{ visibility: 'hidden' }} _groupHover={{ visibility: 'visible' }}
+              <EditableText value={g.name} onSave={v => void editGame({ ...g, name: v }).then(() => refresh())}
+                startOpen={!g.id}
+                previewProps={g.enabled? undefined : { textDecoration: `line-through`, color: `darkgray` }}
               />
+
+            </Td>
+            <Td>{g.categories.join(`, `)}</Td>
+            <Td>
+              {g._count.matches?
+                (!g.enabled?
+                  <IconButton aria-label="Enable" icon={<UnlockIcon/>} size="sm"
+                    onClick={() => void editGame({ id: g.id, enabled: true }).then(refresh) }
+                    sx={{ visibility: `hidden` }} _groupHover={{ visibility: `visible` }}
+                  />
+                  :
+                  <IconButton aria-label="Disable" icon={<LockIcon/>} size="sm"
+                    onClick={() => void editGame({ id: g.id, enabled: false }).then(refresh) }
+                    sx={{ visibility: `hidden` }} _groupHover={{ visibility: `visible` }}
+                  />
+                )
+                :
+                <IconButton aria-label="Delete" icon={<DeleteIcon/>} size="sm"
+                  onClick={() => void editGame({ id: g.id, deleted: true }).then(refresh) }
+                  sx={{ visibility: `hidden` }} _groupHover={{ visibility: `visible` }}
+                />
+              }
             </Td>
           </Tr>)}
         </Tbody>
@@ -86,13 +107,13 @@ export const Games: FCn<{ tour: TourBase }> = ({ tour }) => {
     >
       <Formik
         initialValues={{
-          name: '',
-          categories: '',
+          name: ``,
+          categories: ``,
         }}
         onSubmit={async values => {
           await addGame({
             ...values,
-            categories: values.categories.split(',').map(x => x.trim()),
+            categories: values.categories.split(`,`).map(x => x.trim()),
             tournamentId: tour.id,
           });
           refresh();
@@ -120,10 +141,10 @@ export const Games: FCn<{ tour: TourBase }> = ({ tour }) => {
               </ModalBody>
 
               <ModalFooter>
-                <Button colorScheme='blue' mr={3} onClick={onClose}>
+                <Button variant='ghost' mr={3} onClick={onClose}>
                   Close
                 </Button>
-                <Button variant='ghost' type="submit" isLoading={isSubmitting}>Add</Button>
+                <Button colorScheme='blue' type="submit" isLoading={isSubmitting}>Add</Button>
               </ModalFooter>
             </ModalContent>
           </form>)}

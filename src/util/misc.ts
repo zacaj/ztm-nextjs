@@ -30,7 +30,7 @@ export function num(input: string, def?: number): number {
 }
 
 export function tryNum(str: any): number|undefined {
-  if (typeof str === 'number') return str as number;
+  if (typeof str === `number`) return str as number;
   // const first = (str as string).charCodeAt(0);
   // if (first >= 48 && first <= 57) return str as any;
   try {
@@ -45,7 +45,7 @@ export function nums(input: string[], ...skip: boolean[]): number[] {
 }
 
 export function isNum(input: any): boolean {
-  return (typeof input === 'number' && !Number.isNaN(input)) || tryNum(input) !== undefined;
+  return (typeof input === `number` && !Number.isNaN(input)) || tryNum(input) !== undefined;
 }
 
 export type JSONPrimitive = string | number | boolean | null;
@@ -84,6 +84,8 @@ declare global {
     shuffled(rand?: () => number, times?: number): this;
     random(this: T[], rand?: () => number): T;
     sum(conv?: (val: T, index: number) => number): number;
+    max(conv?: (val: T, index: number) => number): number;
+    min(conv?: (val: T, index: number) => number): number;
     rotate(amount: number): this;
     truthy(): Array<NonNullable<T>>;
     copy(): this;
@@ -126,14 +128,14 @@ Array.prototype.minus = function<T>(this: T[], ...elems: T[]): T[] {
   return arr.remove(...elems);
 };
 Array.prototype.oxford = function<T>(this: T[], last: string): string {
-  let str = this.slice(0, this.length-1).join(', ');
-  if (this.length > 2) str += ',';
-  if (this.length > 1) str += ' '+last+' ';
+  let str = this.slice(0, this.length-1).join(`, `);
+  if (this.length > 2) str += `,`;
+  if (this.length > 1) str += ` `+last+` `;
   return str+this.last();
 };
 Array.prototype.nonOxford = function<T>(this: T[], last: string): string {
-  let str = this.slice(0, this.length-1).join(', ');
-  if (this.length > 1) str += ' '+last+' ';
+  let str = this.slice(0, this.length-1).join(`, `);
+  if (this.length > 1) str += ` `+last+` `;
   return str+this.last();
 };
 Array.prototype.insert = function<T>(this: T[], value: T, where: (before: T) => boolean): number {
@@ -162,6 +164,12 @@ Array.prototype.random = function<T>(this: T[], rand: () => number = () => Math.
 Array.prototype.sum = function<T>(this: T[], conv?: (val: T, index: number) => number): number {
   return this.reduce((prev, cur, index) => prev + (conv? conv(cur, index) : cur as number), 0);
 };
+Array.prototype.min = function<T>(this: T[], conv?: (val: T, index: number) => number): number {
+  return this.reduce((prev, cur, index) => Math.min(prev, (conv? conv(cur, index) : cur as number)), 0);
+};
+Array.prototype.max = function<T>(this: T[], conv?: (val: T, index: number) => number): number {
+  return this.reduce((prev, cur, index) => Math.max(prev, (conv? conv(cur, index) : cur as number)), 0);
+};
 Array.prototype.rotate = function<T>(this: T[], amount: number): T[] {
   while (amount > 0) {
     this.unshift(this.pop()!);
@@ -187,7 +195,7 @@ Array.prototype.slit = function<T>(this: T[], start: number, size: number): T[] 
 };
 // polyfill flatmap for jest
 if (!Array.prototype.flatMap) {
-  Object.defineProperty(Array.prototype, 'flatMap', {
+  Object.defineProperty(Array.prototype, `flatMap`, {
     value: function(callback: any, thisArg: any) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const self = thisArg || this;
@@ -197,7 +205,7 @@ if (!Array.prototype.flatMap) {
   });
 }
 if (!Array.prototype.flat) {
-  Object.defineProperty(Array.prototype, 'flat', {
+  Object.defineProperty(Array.prototype, `flat`, {
     value: function(thisArg: any) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const self = thisArg || this;
@@ -230,10 +238,10 @@ export function clone<T extends Obj>(obj: T): T {
     Object.getPrototypeOf(obj),
     objectMap(Object.getOwnPropertyDescriptors(obj) as any, (d: Obj, k) => ({
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      value: 'value' in d? d.value : (obj)[k],
+      value: `value` in d? d.value : (obj)[k],
       configurable: d.configurable,
       enumerable: d.enumerable,
-      writable: 'writable' in d? d.writable : 'get' in d,
+      writable: `writable` in d? d.writable : `get` in d,
     })),
   ) as T;
 }
@@ -312,7 +320,7 @@ export function getFuncNames<T extends {}>(toCheck: T): ((keyof T)&string)[] {
 
   // eslint-disable-next-line @typescript-eslint/require-array-sort-compare
   return props.sort().filter((e, i, arr) =>
-    e !== arr[i+1] && typeof (toCheck as any)[e] === 'function',
+    e !== arr[i+1] && typeof (toCheck as any)[e] === `function`,
   ) as ((keyof T)&string)[];
 }
 
@@ -421,48 +429,48 @@ export function isPromise(promise?: any): boolean {
   return !!promise?.then;
 }
 
-import inspector from 'inspector';
-export function debugging(): boolean {
-  const argv = process.execArgv.join();
-  const isDebug = argv.includes('inspect') || argv.includes('debug') || !!inspector.url();
-  return isDebug;
-}
+// import inspector from 'inspector';
+// export function debugging(): boolean {
+//   const argv = process.execArgv.join();
+//   const isDebug = argv.includes('inspect') || argv.includes('debug') || !!inspector.url();
+//   return isDebug;
+// }
 
 export function comma(value: number, minWidth = 0): string {
   const s = Math.abs(value).toFixed();
-  const commad = (value<0? '-':'')+Array.from({ length: Math.ceil(s.length/3) }, (_, i) => s.substr(i*3-(i===0?0:3-(s.length%3||3)), i===0? s.length%3||3 : 3)).join(',');
-  return commad.padStart(minWidth, ' ');
+  const commad = (value<0? `-`:``)+Array.from({ length: Math.ceil(s.length/3) }, (_, i) => s.substr(i*3-(i===0?0:3-(s.length%3||3)), i===0? s.length%3||3 : 3)).join(`,`);
+  return commad.padStart(minWidth, ` `);
 }
 
-export function money(value: number, minWidth = 0, plus = ''): string {
+export function money(value: number, minWidth = 0, plus = ``): string {
   const s = comma(value, 0);
-  return ((s.startsWith('-')? '-':plus)+'$'+(s.startsWith('-')? s.slice(1):s)).padStart(minWidth, ' ');
+  return ((s.startsWith(`-`)? `-`:plus)+`$`+(s.startsWith(`-`)? s.slice(1):s)).padStart(minWidth, ` `);
 }
 
 export function score(value: number, minWidth = 0): string {
-  return comma(value, minWidth).trim().padStart(2, '0').padStart(minWidth, ' ');
+  return comma(value, minWidth).trim().padStart(2, `0`).padStart(minWidth, ` `);
 }
 
 export function short(number: number, minWidth = 0): string {
   const SI_PREFIXES = [
-    { value: 1, symbol: '' },
-    { value: 1e3, symbol: 'k' },
-    { value: 1e6, symbol: 'M' },
-    { value: 1e9, symbol: 'G' },
-    { value: 1e12, symbol: 'T' },
-    { value: 1e15, symbol: 'P' },
-    { value: 1e18, symbol: 'E' },
+    { value: 1, symbol: `` },
+    { value: 1e3, symbol: `k` },
+    { value: 1e6, symbol: `M` },
+    { value: 1e9, symbol: `G` },
+    { value: 1e12, symbol: `T` },
+    { value: 1e15, symbol: `P` },
+    { value: 1e18, symbol: `E` },
 
   ].reverse();
 
-  if (number === 0) return '00';
+  if (number === 0) return `00`;
 
   const tier = SI_PREFIXES.find((n) => number >= n.value)!;
   let numberFixed = (number / tier.value).toFixed(1);
-  if (numberFixed.endsWith('.0'))
+  if (numberFixed.endsWith(`.0`))
     numberFixed = numberFixed.slice(0, numberFixed.length-2);
 
-  return `${numberFixed}${tier.symbol}`.padStart(minWidth, ' ');
+  return `${numberFixed}${tier.symbol}`.padStart(minWidth, ` `);
 }
 
 // export function makeState<Name extends string, T extends {}, Args extends any[] = []>(name: Name, obj: T|((...args: Args) => T)):
@@ -491,7 +499,7 @@ export function getFormattedTime() {
   const h = today.getHours();
   const mi = today.getMinutes();
   const s = today.getSeconds();
-  return y + '-' + m + '-' + d + '_' + h + '-' + mi + '-' + s;
+  return y + `-` + m + `-` + d + `_` + h + `-` + mi + `-` + s;
 }
 
 export function round(n: number, nearest: number, lowest = 0) {

@@ -1,7 +1,7 @@
-import { useEditableControls, ButtonGroup, IconButton, Flex, Editable, EditableInput, EditablePreview, Input } from "@chakra-ui/react";
-import { FC } from "./react";
 import { CheckIcon, CloseIcon, EditIcon } from "@chakra-ui/icons";
+import { ButtonGroup, Editable, EditableInput, EditablePreview, EditablePreviewProps, Flex, IconButton, Input, useEditableControls } from "@chakra-ui/react";
 import styled from "styled-components";
+import { FC } from "./react";
 
 const EditableHoverButton = styled.div`
   display: flex;
@@ -17,7 +17,8 @@ export const EditableText: FC<{
   value: string;
   onSave: (value: string) => void;
   startOpen?: boolean;
-}> = ({ value, onSave, startOpen }) => {
+  previewProps?: EditablePreviewProps;
+}> = ({ value, onSave, startOpen, previewProps }) => {
   function EditableControls() {
     const {
       isEditing,
@@ -51,7 +52,7 @@ export const EditableText: FC<{
       gap="2ch"
       startWithEditView={startOpen}
     >
-      <EditablePreview minW="10ch"/>
+      <EditablePreview minW="10ch" {...previewProps}/>
       {/* Here is the custom input */}
       <Input as={EditableInput}/>
       <EditableControls/>

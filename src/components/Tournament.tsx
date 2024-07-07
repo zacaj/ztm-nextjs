@@ -1,19 +1,19 @@
-import { FC, FCc, FCcn } from "@/util/react";
-import { Card, CardBody, CardHeader, HStack, Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react";
-import { Tournament } from "@prisma/client";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+'use client';
+
+import { FCcn, useQueryParam } from "@/util/react";
+import { TourBase } from "@/util/types";
+import { Card, CardBody, CardHeader, Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react";
 import { Games } from "./Games";
 import { Matches } from "./Matches";
-import { TourBase } from "@/util/types";
 
 export const TournamentPage: FCcn<{ tour: TourBase }> = ({ tour, children }) => {
+  const [tabIndex, setTabIndex] = useQueryParam(`tab`, Number);
 
   return (
     <Card>
       <CardHeader>Tournament: {tour.name}</CardHeader>
       <CardBody>
-        <Tabs defaultIndex={1} >
+        <Tabs defaultIndex={tabIndex} onChange={setTabIndex} >
           <TabList>
             <Tab>Matches</Tab>
             <Tab>Games</Tab>
