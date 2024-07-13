@@ -50,7 +50,7 @@ export function isNum(input: any): boolean {
 
 export type JSONPrimitive = string | number | boolean | null;
 export type JSONValue = JSONPrimitive | JSONObject | JSONArray;
-export type JSONObject = { [member: string]: JSONValue|undefined };
+export type JSONObject = {[member: string]: JSONValue|undefined };
 export type JSONArray = JSONValue[];
 
 export type OrArray<T> = T|(T[]);
@@ -90,6 +90,7 @@ declare global {
     truthy(): Array<NonNullable<T>>;
     copy(): this;
     slit(start: number, size: number): this;
+    p<K extends keyof T>(property: K): T[K][];
   }
 
   interface String {
@@ -192,6 +193,9 @@ Array.prototype.shuffled = function<T>(this: T[]): T[] {
 };
 Array.prototype.slit = function<T>(this: T[], start: number, size: number): T[] {
   return this.slice(start, start+size);
+};
+Array.prototype.p = function<T, K extends keyof T>(property: K): T[K][] {
+  return this.map(e => e[property]);
 };
 // polyfill flatmap for jest
 if (!Array.prototype.flatMap) {

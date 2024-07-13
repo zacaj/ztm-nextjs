@@ -15,9 +15,10 @@ type FlexProps = PropsWithChildren<
   > & {
     className?: string | undefined;
     style?: CSSProperties | undefined;
+    ['data-theme']?: any;
   }
 >;
-const FlexDiv = (props: FlexProps & Pick<CSSProperties, `flexDirection`>) => {
+const FlexDiv = ({ [`data-theme`]: _, ...props }: FlexProps & Pick<CSSProperties, `flexDirection`>) => {
   return (
     <div
       style={{ ...props.style, ...props, display: `flex` }}
@@ -99,6 +100,8 @@ export type FCcn<P extends {}> = FCn<PropsWithChildren<P>>;
 export const Loading = Spinner;
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import useLocalStorage from 'use-local-storage';
+import { TourBase } from "./types";
 export function useQueryParam<T = string>(key: string, transform: (value: string) => T = x => x as any):
 [T | undefined, (value: T|undefined) => void] {
   const router = useRouter();
@@ -142,4 +145,10 @@ export function useQueryParam<T = string>(key: string, transform: (value: string
       window.history.pushState(null, ``, `?` + createQueryString(key, `${value}`).toString());
     },
   ];
+}
+
+export function usePlayer(tour: TourBase) {
+  const [playerId, setPlayerId] = useLocalStorage<bigint|undefined>(`playerId`, undefined, { serializer: bigInt => `${bigInt}`, parser: str => BigInt(str) });
+  const player = tour.players.find(p => p.id === playerId);
+  return { player, setPlayerId };
 }

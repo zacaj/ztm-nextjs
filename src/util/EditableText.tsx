@@ -18,14 +18,17 @@ export const EditableText: FC<{
   onSave: (value: string) => void;
   startOpen?: boolean;
   previewProps?: EditablePreviewProps;
-}> = ({ value, onSave, startOpen, previewProps }) => {
-  function EditableControls() {
+  isDisabled?: boolean;
+}> = ({ value, onSave, startOpen, previewProps, isDisabled }) => {
+  function EditableControls({ isDisabled }: { isDisabled?: boolean }) {
     const {
       isEditing,
       getSubmitButtonProps,
       getCancelButtonProps,
       getEditButtonProps,
     } = useEditableControls();
+    if (isDisabled)
+      return null;
 
     return isEditing ? (
       <ButtonGroup justifyContent='center' size='sm'>
@@ -44,6 +47,7 @@ export const EditableText: FC<{
 
   return (
     <Editable
+      isDisabled={isDisabled}
       textAlign='left'
       defaultValue={value}
       isPreviewFocusable={false}
@@ -55,7 +59,9 @@ export const EditableText: FC<{
       <EditablePreview minW="10ch" {...previewProps}/>
       {/* Here is the custom input */}
       <Input as={EditableInput}/>
-      <EditableControls/>
+      <EditableControls
+        isDisabled={isDisabled}
+      />
     </Editable>
   );
 };

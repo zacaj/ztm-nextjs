@@ -239,7 +239,7 @@
       "warn"
     ],
     "react/jsx-no-leaked-render": [
-      "warn"
+      "warn", { "validStrategies": ["coerce", "ternary"] }
     ],
     "react/jsx-closing-bracket-location": [
       "warn",

@@ -16,6 +16,8 @@ model Tournament {
   id   BigInt @id @default(autoincrement())
   name String
 
+  running Boolean @default(false)
+
   type          TournamentType
   maxPlayers    Int
   gamesPerRound Int            @default(1)
@@ -56,7 +58,8 @@ model Match {
   Tournament   Tournament @relation(fields: [tournamentId], references: [id])
   tournamentId BigInt
 
-  game    Game     @relation(fields: [gameId], references: [id])
+  game    Game?    @relation(fields: [gameId], references: [id])
+  gameId  BigInt?
   players Player[]
 
   started     DateTime  @default(now())
@@ -65,6 +68,4 @@ model Match {
 
   roundNum Int?
   gameNum  Int?
-
-  gameId BigInt
 }

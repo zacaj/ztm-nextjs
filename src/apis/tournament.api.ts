@@ -3,7 +3,7 @@
 import { seq } from "@/util/misc";
 import prisma from "@/util/prisma";
 import { UserError } from "@/util/types";
-import { Game, Prisma, Tournament } from "@prisma/client";
+import { Game, Prisma, Tournament, type Player } from "@prisma/client";
 
 export async function setName({ id }: Tournament, name: string) {
   await prisma.tournament.update({
@@ -21,6 +21,18 @@ export async function editGame({ id, ...data }: Partial<Game>&Pick<Game, `id`>) 
 
 export async function addGame({ ...data }: Prisma.GameUncheckedCreateInput) {
   await prisma.game.create({
+    data,
+  });
+}
+export async function editPlayer({ id, ...data }: Partial<Player>&Pick<Player, `id`>) {
+  await prisma.player.update({
+    where: { id },
+    data,
+  });
+}
+
+export async function addPlayer({ ...data }: Prisma.PlayerUncheckedCreateInput) {
+  await prisma.player.create({
     data,
   });
 }
@@ -59,6 +71,9 @@ export async function saveMatchResults(matchId: bigint, finishOrder: number[]) {
   });
   if (finishOrder.length < match.players.length)
     throw new UserError(`not enough results for player count`);
+  if (match.completed)
+    throw new UserError(`match is already completed`);
+
   finishOrder = finishOrder.slice(0, match.players.length);
   return await prisma.match.update({
     where: { id: matchId },
