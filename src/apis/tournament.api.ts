@@ -1,9 +1,9 @@
 "use server";
 
-import { seq } from "@/util/misc";
 import prisma from "@/util/prisma";
 import { UserError } from "@/util/types";
 import { Game, Prisma, Tournament, type Player } from "@prisma/client";
+import { genGroupSizes } from "./logic";
 
 export async function setName({ id }: Tournament, name: string) {
   await prisma.tournament.update({
@@ -117,18 +117,18 @@ export async function nextRound(tournamentId: bigint) {
 
     const playersLeft = tour.players.slice().shuffle();
     const gamesLeft = tour.games.slice().shuffle();
-    const numMatches = Math.ceil(playersLeft.length / tour.maxPlayers);
-    if (numMatches > gamesLeft.length)
+    const groups = genGroupSizes(playersLeft.length, tour.maxPlayers);
+    if (groups.length > gamesLeft.length)
       throw new UserError(`not enough games`);
 
-    for (const i of seq(numMatches)) {
+    for (const groupSize of groups) {
       await prisma.match.create({
         data: {
           tournamentId,
           gameId: gamesLeft.shift()!.id,
           roundNum: lastRoundNum!+1,
           players: {
-            connect: playersLeft.slit(i*tour.maxPlayers, tour.maxPlayers).map(p => ({ id: p.id })),
+            connect: playersLeft.splice(0, groupSize).map(p => ({ id: p.id })),
           },
         },
       });
@@ -136,24 +136,6 @@ export async function nextRound(tournamentId: bigint) {
   });
 }
 
-// export async function devFinishAll(tournamentId: bigint) {
-//   await prisma.match.updateMany({
-//     where: {
-//       tournamentId,
-//       completed: null,
-//     },
-//     data: {
-//       completed: new Date(),
-//       finishOrder: {
-//         set: [1, 2, 3, 4],
-//       },
-//     },
-//   });
-// }
-
-// export const devMatchUpdate: (typeof prisma)['match']['updateMany'] = (args) => {
-//   return prisma.match.updateMany(args);
-// };
 
 type P = typeof prisma;
 type TableUpdates = {[K in keyof P as P[K] extends { updateMany: any }? K : never]: P[K] };

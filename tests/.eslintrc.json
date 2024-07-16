@@ -1,0 +1,21 @@
+// @ts-check
+/**
+ * @type {import('eslint').Linter.Config}
+ */
+{
+  "parserOptions": {
+    "project": "./tests/tsconfig.json"
+  },
+  "extends": [
+    "plugin:@cypress/dev/general",
+    "plugin:@cypress/dev/tests",
+    "../.eslintrc.json"
+  ],
+  "plugins": [
+    "@cypress/dev"
+  ],
+  "rules": {
+    "no-console": "off",
+    "curly": "off"
+  }
+}

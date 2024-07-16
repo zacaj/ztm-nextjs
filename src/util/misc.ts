@@ -259,8 +259,9 @@ export function seq<T = number>(count: number, start=0): T[] {
 
 export function range<T = number>(start: number, end: number): T[] {
   const ret: T[] = [];
-  for (let i=start; i<=end; i++)
+  for (let i=start; i!==end; i+=Math.sign(end-start))
     ret.push(i as T);
+  ret.push(end as T);
   return ret;
 }
 

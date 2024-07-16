@@ -8,11 +8,14 @@
     "eslint:recommended",
     "plugin:react/recommended",
     "plugin:react-hooks/recommended",
+    // "plugin:@cypress/dev/general",
+    // "plugin:@cypress/dev/tests",
     "next/core-web-vitals"
   ],
   "plugins": [
     "@typescript-eslint",
     "react-hooks",
+    // "@cypress/dev",
     "@stylistic"
   ],
   "parserOptions": {
