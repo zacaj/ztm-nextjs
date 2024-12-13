@@ -1,11 +1,10 @@
 import prisma from "@/util/prisma";
 // import { TournamentPage } from "./Tournament";
 import { TourBase } from "@/util/types";
-import dynamic from 'next/dynamic';
 import { notFound } from "next/navigation";
 
-const TournamentPage = dynamic(() => import(`../../../components/Tournament`).then(i => i.TournamentPage), { ssr: false });
-// import { TournamentPage } from "../../../components/Tournament";
+// const TournamentPage = dynamic(() => import(`../../../components/Tournament`).then(i => i.TournamentPage), { ssr: false });
+import { TournamentPage } from "../../../components/Tournament";
 
 export default async function({ params: { id }}: { params: { id: number }}) {
   const tour = await prisma.tournament.findUnique({
