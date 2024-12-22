@@ -13,9 +13,11 @@
     "@chakra-ui/icons": "^2.1.1",
     "@chakra-ui/next-js": "^2.2.0",
     "@chakra-ui/react": "^2.8.2",
-    "@prisma/client": "^5.16.1",
+    "@prisma/client": "^6.1.0",
+    "@types/pg": "^8.11.10",
     "formik": "^2.4.6",
-    "next": "^15.1.0",
+    "next": "^15.1.2",
+    "pg": "^8.13.1",
     "react": "^18",
     "react-dom": "^18",
     "styled-components": "^6.1.11",
@@ -34,13 +36,13 @@
     "cypress": "latest",
     "cypress-map": "^1.40.0",
     "eslint": "^8.57.0",
-    "eslint-config-next": "14.2.4",
+    "eslint-config-next": "15.1.2",
     "eslint-plugin-json": "^4.0.0",
     "eslint-plugin-react": "^7.34.3",
     "eslint-plugin-react-hooks": "^4.6.2",
-    "prisma": "^5.16.1",
+    "prisma": "^6.1.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.5.2"
+    "typescript": "^5.7.2"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"

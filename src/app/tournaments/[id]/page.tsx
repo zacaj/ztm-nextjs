@@ -6,7 +6,13 @@ import { notFound } from "next/navigation";
 // const TournamentPage = dynamic(() => import(`../../../components/Tournament`).then(i => i.TournamentPage), { ssr: false });
 import { TournamentPage } from "../../../components/Tournament";
 
-export default async function({ params: { id }}: { params: { id: number }}) {
+export default async function(props: { params: Promise<{ id: number }> }) {
+  const params = await props.params;
+
+  const {
+    id,
+  } = params;
+
   const tour = await prisma.tournament.findUnique({
     where: { id },
     include: {
