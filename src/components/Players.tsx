@@ -38,8 +38,8 @@ export const Players: FCn<{ tour: TourBase }> = ({ tour }) => {
   const { refresh } = useRouter();
   const players= tour.players;
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const addButtonRef = useRef<any>();
-  const nameFieldRef = useRef<any>();
+  const addButtonRef = useRef<any>(null);
+  const nameFieldRef = useRef<any>(null);
   const [isTd] = useLocalStorage(`isTd`, false);
 
   const [filter, setFilter] = useState<string>();
