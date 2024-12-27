@@ -141,10 +141,10 @@ type P = typeof prisma;
 type TableUpdates = {[K in keyof P as P[K] extends { updateMany: any }? K : never]: P[K] };
 type TableUpdateKeys = keyof TableUpdates;
 type DevUpdate<K extends TableUpdateKeys> = P[K][`updateMany`];
-export const devUpdate = <K extends TableUpdateKeys>(
+export const devUpdate = async <K extends TableUpdateKeys>(
   key: K,
   ...args: Parameters<DevUpdate<K>>
-): ReturnType<DevUpdate<K>> =>
+): Promise<Awaited<ReturnType<DevUpdate<K>>>> =>
   (prisma[key] as any).updateMany(...args);
 
 type TableMethods<M extends PropertyKey> = {[K in keyof P as P[K] extends { M: any }? K : never]: P[K] };
