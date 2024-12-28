@@ -91,6 +91,7 @@ declare global {
     copy(): this;
     slit(start: number, size: number): this;
     p<K extends keyof T>(property: K): T[K][];
+    zip<U>(arr: U[]): [T, U][];
   }
 
   interface String {
@@ -194,16 +195,19 @@ Array.prototype.shuffled = function<T>(this: T[]): T[] {
 Array.prototype.slit = function<T>(this: T[], start: number, size: number): T[] {
   return this.slice(start, start+size);
 };
-Array.prototype.p = function<T, K extends keyof T>(property: K): T[K][] {
+Array.prototype.p = function<T, K extends keyof T>(this: T[], property: K): T[K][] {
   return this.map(e => e[property]);
+};
+Array.prototype.zip = function<T, U>(this: T[], that: U[]): [T, U][] {
+  return this.map((e, i) => ([e, that[i]]));
 };
 // polyfill flatmap for jest
 if (!Array.prototype.flatMap) {
   Object.defineProperty(Array.prototype, `flatMap`, {
     value: function(callback: any, thisArg: any) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+
       const self = thisArg || this;
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+
       return self.reduce((acc: any, x: any) => acc.concat(callback(x)), []);
     },
   });
@@ -211,9 +215,9 @@ if (!Array.prototype.flatMap) {
 if (!Array.prototype.flat) {
   Object.defineProperty(Array.prototype, `flat`, {
     value: function(thisArg: any) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+
       const self = thisArg || this;
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+
       return self.reduce((acc: any, x: any) => acc.concat(x), []);
     },
   });
@@ -238,10 +242,10 @@ String.prototype.and = function<T extends {}>(this: string, obj: T): T&string {
 
 export function clone<T extends Obj>(obj: T): T {
   return Object.create(
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+
     Object.getPrototypeOf(obj),
     objectMap(Object.getOwnPropertyDescriptors(obj) as any, (d: Obj, k) => ({
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+
       value: `value` in d? d.value : (obj)[k],
       configurable: d.configurable,
       enumerable: d.enumerable,
@@ -273,6 +277,7 @@ export function repeat<T>(x: T, count: number): T[] {
 }
 
 export function rangeSelect<T>(val: number, ...choices: [number, T][]): T {
+  // eslint-disable-next-line @typescript-eslint/prefer-for-of
   for (let i=0; i<choices.length; i++) {
     if (val < choices[i][0]) return choices[i][1];
   }
@@ -316,14 +321,14 @@ export function getFuncNames<T extends {}>(toCheck: T): ((keyof T)&string)[] {
   let props: string[] = [];
   let obj: any = toCheck;
   do {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+
     const o = obj;
     props = props.concat(Object.getOwnPropertyNames(obj).filter(e => !Object.getOwnPropertyDescriptor(o, e)?.get));
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+
     obj = Object.getPrototypeOf(obj);
   } while (obj);
 
-  // eslint-disable-next-line @typescript-eslint/require-array-sort-compare
+
   return props.sort().filter((e, i, arr) =>
     e !== arr[i+1] && typeof (toCheck as any)[e] === `function`,
   ) as ((keyof T)&string)[];

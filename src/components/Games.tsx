@@ -39,8 +39,8 @@ export const Games: FCn<{ tour: TourBase }> = ({ tour }) => {
   // const [games, setGames] = useState(tour.games);
   const games= tour.games;
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const addButtonRef = useRef<any>();
-  const nameFieldRef = useRef<any>();
+  const addButtonRef = useRef<any>(null);
+  const nameFieldRef = useRef<any>(null);
   const [isTd] = useLocalStorage(`isTd`, false);
 
   const categories = useMemo(() => [...new Set(games.flatMap(g => g.categories))].filter(x => x), [games]);

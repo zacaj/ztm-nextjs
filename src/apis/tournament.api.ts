@@ -52,34 +52,47 @@ export async function getMatches(tournamentId: bigint, where?: Prisma.MatchWhere
       },
       include: {
         game: true,
-        players: true,
+        players: {
+          include: {
+            player: true,
+          },
+          orderBy: { id: `asc` },
+        },
       },
-    }).then(ms => ms.map(m => {
-      m.finishOrder.splice(m.players.length, m.finishOrder.length);
-      return m;
-    })),
+    }),
     curRound: roundNum,
   };
 }
 
-export async function saveMatchResults(matchId: bigint, finishOrder: number[]) {
+export async function saveMatchResults(matchId: bigint, results: { playerId: bigint; place: number | null }[]) {
   const match = await prisma.match.findUniqueOrThrow({
     where: { id: matchId },
     include: {
       players: true,
     },
   });
-  if (finishOrder.length < match.players.length)
-    throw new UserError(`not enough results for player count`);
+  // if (finishOrder.length < match.players.length)
+  //   throw new UserError(`not enough results for player count`);
+  if (results.some(r => r.place!==null && (r.place<1 || r.place > match.players.length)))
+    throw new UserError(`places must be [1-N]`);
   if (match.completed)
     throw new UserError(`match is already completed`);
 
-  finishOrder = finishOrder.slice(0, match.players.length);
   return await prisma.match.update({
     where: { id: matchId },
     data: {
-      finishOrder,
-      completed: finishOrder.every(p => p)? new Date() : undefined,
+      players: {
+        updateMany: results.map(r => ({
+          where: {
+            playerId: r.playerId,
+            matchId: matchId,
+          },
+          data: {
+            place: r.place,
+          },
+        })),
+      },
+      completed: results.length === match.players.length && results.every(p => p.place)? new Date() : undefined,
     },
   });
 }

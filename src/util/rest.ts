@@ -48,14 +48,14 @@ type UseSetObj<T, R = void, E = Error> = ({
   error: E;
 }) & {
 };
-export function useSet<T = any, R = void, E = Error>(
+export function useSet<T, R = void, E = Error>(
   key: string, act: (args: T) => Promise<R>,
 ): UseSetObj<T, E> & ((args: T) => Promise<R>) {
   const hook = useSWRMutation(
     key,
     (key, opts: { arg: T }) => act(opts.arg),
   );
-  const trigger = useCallback((arg: T) => hook.trigger(arg, { key })
+  const trigger = useCallback((arg: T) => (hook.trigger as any)(arg, { key })
     .then(() => mutate((match: unknown) => match === key || (typeof match === `string` && match.startsWith(key)))), [hook, key]);
   const obj = (trigger as unknown as UseSetObj<T, R, E>);
   obj.isLoading = hook.isMutating;

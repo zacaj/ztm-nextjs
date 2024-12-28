@@ -1,7 +1,6 @@
 'use client';
 
-import { devUpdate, getMatches, nextRound } from '@/apis/tournament.api';
-import '@/util/misc';
+import { devUpdate, getMatches, nextRound, saveMatchResults } from '@/apis/tournament.api';
 import { repeat, seq } from '@/util/misc';
 import { FCn, Loading, usePlayer, useQueryParam } from "@/util/react";
 import { useGet } from "@/util/rest";
@@ -11,6 +10,7 @@ import { Button, ButtonGroup, Heading, HStack, Select, Spacer, VStack } from "@c
 import useLocalStorage from 'use-local-storage';
 import { MatchList } from './MatchList';
 
+// eslint-disable-next-line complexity
 export const Matches: FCn<{ tour: TourBase }> = ({ tour }) => {
   const { player } = usePlayer(tour);
   const [isTd] = useLocalStorage(`isTd`, false);
@@ -31,28 +31,31 @@ export const Matches: FCn<{ tour: TourBase }> = ({ tour }) => {
           <ButtonGroup size='sm'>
             Debugging:
             <Spacer/>
+            <Button onClick={() => void Promise.all(
+              inProgress.map(m => saveMatchResults(m.id,
+                m.players.shuffled().map((p, i) => ({ playerId: p.playerId, place: i+1 })))),
+            ).then(refreshMatches)} isDisabled={!inProgress.length}
+            >
+              Finish All
+            </Button>
             <Button onClick={() => void devUpdate(`match`, {
               where: {
-                tournamentId: tour.id,
-                completed: null,
-              },
-              data: {
-                completed: new Date(),
-                finishOrder: seq(tour.maxPlayers, 1).shuffle(),
-              },
-            }).then(refreshMatches)} isDisabled={!inProgress.length}
-            >Finish All</Button>
-            <Button onClick={() => void devUpdate(`match`, {
-              where: {
-                tournamentId: tour.id,
-                completed: { not: null },
-                roundNum: matches.map(m => m.roundNum).max(),
+                id: { in: completed.map(m => m.id) },
               },
               data: {
                 completed: null,
-                finishOrder: repeat(0, tour.maxPlayers),
               },
-            }).then(refreshMatches)} isDisabled={!completed.length}
+            }).then(() => devUpdate(`matchPlayer`, {
+              where: {
+                matchId: {
+                  in: completed.map(m => m.id),
+                },
+              },
+              data: {
+                place: null,
+                score: null,
+              },
+            })).then(refreshMatches)} isDisabled={!completed.length}
             >Unfinish All</Button>
           </ButtonGroup>
         </HStack>
@@ -80,13 +83,15 @@ export const Matches: FCn<{ tour: TourBase }> = ({ tour }) => {
       {matches.length?
         <>
           {!!inProgress.length && !!completed.length && <Heading size="sm">In Progress ({inProgress.length}/{matches.length})</Heading>}
-          {!!inProgress.length && <MatchList tour={tour} matches={inProgress} refreshMatches={refreshMatches}
+          {!!inProgress.length &&
+          <MatchList tour={tour} matches={inProgress} refreshMatches={refreshMatches}
             highlightPlayerId={player?.id}
-                                  />}
+          />}
           {!!completed.length && <Heading size="sm">Completed ({completed.length}/{matches.length})</Heading>}
-          {!!completed.length && <MatchList tour={tour} matches={completed} refreshMatches={refreshMatches}
+          {!!completed.length &&
+          <MatchList tour={tour} matches={completed} refreshMatches={refreshMatches}
             highlightPlayerId={player?.id}
-                                 />}
+          />}
         </>
         :
         <>No matches found!</>
