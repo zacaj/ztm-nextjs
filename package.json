@@ -32,8 +32,12 @@
     "use-local-storage": "^3.0.0"
   },
   "devDependencies": {
+    "@eslint/compat": "^1.2.4",
+    "@eslint/eslintrc": "^3.2.0",
+    "@eslint/js": "^9.17.0",
     "@mightymeld/swc-plugin": "^0.90.3",
     "@stylistic/eslint-plugin": "^2.12.1",
+    "@testcontainers/postgresql": "^10.16.0",
     "@types/node": "^22.10.2",
     "@types/react": "^19.0.2",
     "@types/react-dom": "^19.0.2",
@@ -47,6 +51,7 @@
     "eslint-plugin-json": "^4.0.1",
     "eslint-plugin-react": "^7.37.3",
     "eslint-plugin-react-hooks": "^5.1.0",
+    "globals": "^15.14.0",
     "prisma": "^6.1.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.2"
