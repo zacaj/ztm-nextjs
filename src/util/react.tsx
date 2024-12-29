@@ -147,9 +147,18 @@ export function useQueryParam<T = string>(key: string, transform: (value: string
   ];
 }
 
+export function useHasMounted() {
+  const [hasMounted, setHasMounted] = useState(false);
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+  return hasMounted;
+}
+
 export function usePlayer(tour: TourBase) {
   const [playerId, setPlayerId] = useLocalStorage<bigint|undefined>(`playerId`, undefined, { serializer: bigInt => `${bigInt}`, parser: str => BigInt(str) });
-  const player = tour.players.find(p => p.id === playerId);
+  const hasMounted = useHasMounted();
+  const player = hasMounted? tour.players.find(p => p.id === playerId) : undefined;
   return { player, setPlayerId };
 }
 
@@ -198,3 +207,9 @@ export const Tabs: FC<{
       </TabContent>)}
   </TabWrapper>;
 };
+
+export function LoadingError({ err }: { err?: any }) {
+  if (err)
+    return <span>Error: {err}</span>;
+  return <Loading/>;
+}

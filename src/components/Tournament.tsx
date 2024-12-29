@@ -9,8 +9,9 @@ import { Players } from "./Players";
 import { You } from "./You";
 import { useMemo } from "react";
 import { Standings } from "./Standings";
+import dynamic from "next/dynamic";
 
-export const TournamentPage: FCcn<{ tour: TourBase }> = ({ tour, children }) => {
+const TournamentPage_: FCcn<{ tour: TourBase }> = ({ tour, children }) => {
   const isStarted = !tour.games.some(g => g._count.matches);
   const tabs = useMemo<Tab[]>(() => [
     {
@@ -47,3 +48,9 @@ export const TournamentPage: FCcn<{ tour: TourBase }> = ({ tour, children }) => 
     </Card>
   );
 };
+
+
+// const X = dynamic(Promise.resolve(TournamentPage_), { ssr: false });
+
+// export const TournamentPage = (props: any) => <TournamentPage_ {...props}/>;
+export const TournamentPage = TournamentPage_;

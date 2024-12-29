@@ -1,7 +1,7 @@
 "use client";
 import { addPlayer, editPlayer, getStandings } from "@/apis/tournament.api";
 import { EditableText } from "@/util/EditableText";
-import { FCn, Loading, usePlayer } from "@/util/react";
+import { FCn, Loading, LoadingError, usePlayer } from "@/util/react";
 import { useGet } from "@/util/rest";
 import { TourBase } from "@/util/types";
 import { AddIcon, DeleteIcon, LockIcon, SpinnerIcon, UnlockIcon } from "@chakra-ui/icons";
@@ -44,13 +44,13 @@ export const Standings: FCn<{ tour: TourBase }> = ({ tour }) => {
 
 
   const {
-    data: standings, isLoading, refresh: refreshStandings,
+    data: standings, isLoading, refresh: refreshStandings, error: standingsErr,
   } = useGet(`tournament/${tour.id}/standings`,
     () => getStandings(tour.id)
     , { refreshIntervalSec: 60 },
   );
 
-  if (!standings) return <Loading/>;
+  if (!standings) return <LoadingError err={standingsErr}/>;
 
   return <>
     {/* <HStack>
