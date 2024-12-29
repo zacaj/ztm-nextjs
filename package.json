@@ -13,7 +13,7 @@
     "db:migrate": "npx prisma migrate dev",
     "db:migrate:create": "npx prisma migrate dev --create-only",
     "db:generate": "npx prisma generate",
-    "db:start": "docker compose -f docker/docker-compose.yml start db -d",
+    "db:start": "docker compose -f docker/docker-compose.yml up -d db",
     "docker:start": "docker compose -f docker/docker-compose.yml up -db"
   },
   "dependencies": {

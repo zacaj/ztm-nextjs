@@ -1,42 +1,47 @@
 'use client';
 
-import { FCcn, useQueryParam } from "@/util/react";
+import { FCcn, Tabs, useQueryParam, type Tab } from "@/util/react";
 import { TourBase } from "@/util/types";
-import { Card, CardBody, CardHeader, Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react";
+import { Card, CardBody, CardHeader } from "@chakra-ui/react";
 import { Games } from "./Games";
 import { Matches } from "./Matches";
 import { Players } from "./Players";
 import { You } from "./You";
+import { useMemo } from "react";
+import { Standings } from "./Standings";
 
 export const TournamentPage: FCcn<{ tour: TourBase }> = ({ tour, children }) => {
-  const [tabIndex, setTabIndex] = useQueryParam(`tab`, Number);
+  const isStarted = !tour.games.some(g => g._count.matches);
+  const tabs = useMemo<Tab[]>(() => [
+    {
+      name: `You`,
+      component: <You tour={tour}/>,
+    },
+    {
+      name: `Standings`,
+      component: <Standings tour={tour}/>,
+      isHidden: isStarted,
+    },
+    {
+      name: `Matches`,
+      component: <Matches tour={tour}/>,
+      isHidden: !tour.games.some(g => g._count.matches),
+    },
+    {
+      name: `Games`,
+      component: <Games tour={tour}/>,
+    },
+    {
+      name: `Players`,
+      component: <Players tour={tour}/>,
+    },
+  ], [isStarted, tour]);
 
   return (
     <Card>
       <CardHeader>Tournament: {tour.name}</CardHeader>
       <CardBody>
-        <Tabs defaultIndex={tabIndex} onChange={setTabIndex} >
-          <TabList>
-            <Tab>You</Tab>
-            <Tab>Matches</Tab>
-            <Tab>Games</Tab>
-            <Tab>Players</Tab>
-          </TabList>
-          <TabPanels>
-            <TabPanel>
-              <You tour={tour}/>
-            </TabPanel>
-            <TabPanel>
-              <Matches tour={tour}/>
-            </TabPanel>
-            <TabPanel>
-              <Games tour={tour}/>
-            </TabPanel>
-            <TabPanel>
-              <Players tour={tour}/>
-            </TabPanel>
-          </TabPanels>
-        </Tabs>
+        <Tabs tabs={tabs}/>
         {children}
       </CardBody>
     </Card>

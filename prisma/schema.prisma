@@ -39,7 +39,9 @@ model Player {
   enabled Boolean @default(true)
   deleted Boolean @default(false)
 
-  matches MatchPlayer[]
+  matches        MatchPlayer[]
+  matchPoints    MatchPoints[]
+  matchStandings MatchStandings[]
 }
 
 model Game {
@@ -66,9 +68,10 @@ model Match {
   started   DateTime  @default(now())
   completed DateTime?
 
-  roundNum Int?
-  gameNum  Int?
-  players  MatchPlayer[]
+  roundNum    Int?
+  gameNum     Int?
+  players     MatchPlayer[]
+  matchPoints MatchPoints[]
 }
 
 model MatchPlayer {
@@ -79,4 +82,25 @@ model MatchPlayer {
   playerId BigInt
   place    Int?
   score    BigInt?
+}
+
+view MatchPoints {
+  tournamentId BigInt
+  player       Player @relation(fields: [playerId], references: [id])
+  playerId     BigInt
+  match        Match  @relation(fields: [matchId], references: [id])
+  matchId      BigInt
+  points       BigInt
+  roundNum     Int?
+
+  @@unique([tournamentId, playerId, matchId])
+}
+
+view MatchStandings {
+  tournamentId BigInt
+  playerId     BigInt
+  player       Player @relation(fields: [playerId], references: [id])
+  total        Int
+
+  @@unique([tournamentId, playerId])
 }

@@ -149,6 +149,17 @@ export async function nextRound(tournamentId: bigint) {
   });
 }
 
+export async function getStandings(tournamentId: bigint) {
+  return prisma.matchStandings.findMany({
+    where: {
+      tournamentId,
+    },
+    include: {
+      player: true,
+    },
+  });
+};
+
 
 type P = typeof prisma;
 type TableUpdates = {[K in keyof P as P[K] extends { updateMany: any }? K : never]: P[K] };

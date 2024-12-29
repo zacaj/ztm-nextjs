@@ -10,10 +10,14 @@ import { MatchList } from './MatchList';
 
 export const You: FCn<{ tour: TourBase }> = ({ tour }) => {
   const { player, setPlayerId } = usePlayer(tour);
-  const { data: matches, isLoading, refresh: refreshMatches,
-  } = useGet(`tournament/${tour.id}/matches?player=${player?.id}`, () => player? getMatches(tour.id, { players: {
-    some: { id: player.id },
-  }}).then(({ matches }) => matches) : [], { refreshIntervalSec: 60 });
+  const {
+    data: matches, isLoading, refresh: refreshMatches,
+  } = useGet(`tournament/${tour.id}/matches?player=${player?.id}`,
+    () => player? getMatches(tour.id, { players: {
+      some: { id: player.id },
+    }}).then(({ matches }) => matches) : []
+    , { refreshIntervalSec: 60 },
+  );
   const current = matches?.filter(m => !m.completed);
   const prev = matches?.filter(m => !!m.completed);
 
@@ -23,7 +27,7 @@ export const You: FCn<{ tour: TourBase }> = ({ tour }) => {
         <Heading size="sm">You are: {player.name}</Heading>
         <Button onClick={() => setPlayerId(undefined)} size="sm" variant="outline"
           leftIcon={<RepeatClockIcon/>}
-        >Sign Out</Button>
+        >No I'm not!</Button>
       </HStack>
       <HStack>
         <ButtonGroup size='sm'>

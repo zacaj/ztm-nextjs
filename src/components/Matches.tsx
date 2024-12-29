@@ -15,11 +15,14 @@ export const Matches: FCn<{ tour: TourBase }> = ({ tour }) => {
   const { player } = usePlayer(tour);
   const [isTd] = useLocalStorage(`isTd`, false);
   const [roundNum, setRound] = useQueryParam(`round`, Number);
-  const { data:
-    { matches = [], curRound = undefined } = {},
-  isLoading,
-  refresh: refreshMatches,
-  } = useGet(`tournament/${tour.id}/matches`+(roundNum? `/rounds/${roundNum}` : ``), () => getMatches(tour.id, roundNum? { roundNum } : undefined));
+  const {
+    data: { matches = [], curRound = undefined } = {},
+    isLoading,
+    refresh: refreshMatches,
+  } = useGet(
+    `tournament/${tour.id}/matches`+(roundNum? `/rounds/${roundNum}` : ``),
+    () => getMatches(tour.id, roundNum? { roundNum } : undefined),
+  );
   const completed = matches.filter(m => m.completed);
   const inProgress = matches.filter(m => !m.completed);
 
