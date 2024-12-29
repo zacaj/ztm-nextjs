@@ -100,7 +100,8 @@ view MatchStandings {
   tournamentId BigInt
   playerId     BigInt
   player       Player @relation(fields: [playerId], references: [id])
-  total        Int
+  total        BigInt
+  rank         BigInt
 
   @@unique([tournamentId, playerId])
 }

@@ -38,7 +38,7 @@ import useLocalStorage from "use-local-storage";
 export const Standings: FCn<{ tour: TourBase }> = ({ tour }) => {
   const { refresh } = useRouter();
   const [isTd] = useLocalStorage(`isTd`, false);
-  const { player, setPlayerId } = usePlayer(tour);
+  const { player } = usePlayer(tour);
 
   const [filter, setFilter] = useState<string>();
 
@@ -75,11 +75,12 @@ export const Standings: FCn<{ tour: TourBase }> = ({ tour }) => {
           </Tr>
         </Thead>
         <Tbody>
-          {standings.map((s, i) => <Tr key={s.playerId} role="group" backgroundColor={s.playerId === player?.id? `#fc9` : undefined}>
-            <Td>{i+1}</Td>
-            <Td>{s.player.name}            </Td>
-            <Td>{s.total}            </Td>
-          </Tr>)}
+          {standings.map((s) =>
+            <Tr key={s.playerId} role="group" backgroundColor={s.playerId === player?.id? `#fc9` : undefined}>
+              <Td>{s.rank}</Td>
+              <Td>{s.player.name}</Td>
+              <Td>{s.total}</Td>
+            </Tr>)}
         </Tbody>
       </Table>
     </TableContainer>
