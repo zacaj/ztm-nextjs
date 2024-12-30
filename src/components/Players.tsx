@@ -72,7 +72,7 @@ export const Players: FCn<{ tour: TourBase }> = ({ tour }) => {
         <Tbody>
           {players.filter(g => !filter || true).map(g => <Tr key={g.id} role="group">
             <Td>
-              <EditableText value={g.name} onSave={v => void editPlayer({ ...g, name: v }).then(() => refresh())}
+              <EditableText value={g.name} onSave={v => editPlayer({ ...g, name: v }).then(() => refresh())}
                 startOpen={!g.id} isDisabled={!isTd}
                 previewProps={g.enabled? undefined : { textDecoration: `line-through`, color: `darkgray` }}
               />
@@ -84,18 +84,18 @@ export const Players: FCn<{ tour: TourBase }> = ({ tour }) => {
                 {g._count.matches?
                   (!g.enabled?
                     <IconButton aria-label="Enable" icon={<UnlockIcon/>} size="sm"
-                      onClick={() => void editPlayer({ id: g.id, enabled: true }).then(refresh) }
+                      onClick={() => editPlayer({ id: g.id, enabled: true }).then(refresh) }
                       sx={{ visibility: `hidden` }} _groupHover={{ visibility: `visible` }}
                     />
                     :
                     <IconButton aria-label="Disable" icon={<LockIcon/>} size="sm"
-                      onClick={() => void editPlayer({ id: g.id, enabled: false }).then(refresh) }
+                      onClick={() => editPlayer({ id: g.id, enabled: false }).then(refresh) }
                       sx={{ visibility: `hidden` }} _groupHover={{ visibility: `visible` }}
                     />
                   )
                   :
                   <IconButton aria-label="Delete" icon={<DeleteIcon/>} size="sm"
-                    onClick={() => void editPlayer({ id: g.id, deleted: true }).then(refresh) }
+                    onClick={() => editPlayer({ id: g.id, deleted: true }).then(refresh) }
                     sx={{ visibility: `hidden` }} _groupHover={{ visibility: `visible` }}
                   />
                 }

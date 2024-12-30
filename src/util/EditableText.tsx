@@ -1,7 +1,8 @@
 import { CheckIcon, CloseIcon, EditIcon } from "@chakra-ui/icons";
-import { ButtonGroup, Editable, EditableInput, EditablePreview, EditablePreviewProps, Flex, IconButton, Input, useEditableControls } from "@chakra-ui/react";
+import { ButtonGroup, Editable, EditableInput, EditablePreview, EditablePreviewProps, Flex, IconButton, Input, useEditableControls, type HTMLChakraProps, type InputProps } from "@chakra-ui/react";
 import styled from "styled-components";
 import { FC } from "./react";
+import type { ComponentProps } from "react";
 
 const EditableHoverButton = styled.div`
   display: flex;
@@ -15,11 +16,13 @@ const EditableHoverButton = styled.div`
 
 export const EditableText: FC<{
   value: string;
-  onSave: (value: string) => void;
+  onSave: (value: string) => void|Promise<void>;
   startOpen?: boolean;
   previewProps?: EditablePreviewProps;
-  isDisabled?: boolean;
-}> = ({ value, onSave, startOpen, previewProps, isDisabled }) => {
+  inputProps?: InputProps;
+  placeholder?: string;
+  isDisabled?: boolean; // whether it's editable or readonly
+}> = ({ value, onSave, startOpen, previewProps, inputProps, isDisabled, placeholder }) => {
   function EditableControls({ isDisabled }: { isDisabled?: boolean }) {
     const {
       isEditing,
@@ -55,13 +58,25 @@ export const EditableText: FC<{
       as={EditableHoverButton}
       gap="2ch"
       startWithEditView={startOpen}
+      placeholder={placeholder}
     >
       <EditablePreview minW="10ch" {...previewProps}/>
       {/* Here is the custom input */}
-      <Input as={EditableInput}/>
+      <Input as={EditableInput} {...inputProps}/>
       <EditableControls
         isDisabled={isDisabled}
       />
     </Editable>
   );
+};
+
+export const EditableInteger: FC<Omit<ComponentProps<typeof EditableText>, `onSave` | `value`> & {
+  value: number;
+  onSave: (value: number) => void|Promise<void>;
+  min?: number;
+  max?: number;
+}> = ({ inputProps, value, onSave, min, max, ...props }) => {
+  return <EditableText {...props} inputProps={{ type: `number`, step: 1, min: min ?? 0, max, ...inputProps }} value={`${value}`}
+    onSave={(val) => onSave(Number(val))}
+  />;
 };

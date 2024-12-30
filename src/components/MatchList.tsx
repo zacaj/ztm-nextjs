@@ -2,7 +2,7 @@
 
 import { saveMatchResults } from '@/apis/tournament.api';
 import { seq } from '@/util/misc';
-import { FC, FCn, FlexRow, style } from "@/util/react";
+import { FC, FCn, FlexRow, style, usePlayer } from "@/util/react";
 import { useSet } from "@/util/rest";
 import { Match_, TourBase, UserError } from "@/util/types";
 import { Button, Center, Flex, Grid, GridItem, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Radio, SimpleGrid, Table, Tbody, Td, Th, Thead, Tr, useToast } from "@chakra-ui/react";
@@ -36,6 +36,7 @@ const PlacementTd = style(Td, { cursor: `pointer`, paddingX: 5, textAlign: `cent
 export const MatchList: FCn<{ tour: TourBase; matches: Match_[]; refreshMatches: () => void; highlightPlayerId?: bigint }> = ({ tour, matches, refreshMatches, highlightPlayerId }) => {
   const [isTd] = useLocalStorage(`isTd`, false);
   const toast = useToast();
+  const { player } = usePlayer(tour);
 
   const [selected, setSelected] = useState<Match_>();
   const onMatchClick = useCallback((match: Match_) => {
@@ -48,7 +49,10 @@ export const MatchList: FCn<{ tour: TourBase; matches: Match_[]; refreshMatches:
     (m: Match_) => saveMatchResults(m.id, finishing.map((place, pI) => ({
       playerId: selected!.players.sort((a, b) => Number(a.id-b.id))[pI].playerId,
       place: place || null,
-    })))
+    })),
+    player?.id ?? null,
+    null, /* todo */
+    )
       .catch(err => {
         if (err instanceof UserError && err.message===`match is already completed`) {
           toast({

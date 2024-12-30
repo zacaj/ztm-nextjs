@@ -36,7 +36,7 @@ export const Matches: FCn<{ tour: TourBase }> = ({ tour }) => {
             <Spacer/>
             <Button onClick={() => void Promise.all(
               inProgress.map(m => saveMatchResults(m.id,
-                m.players.shuffled().map((p, i) => ({ playerId: p.playerId, place: i+1 })))),
+                m.players.shuffled().map((p, i) => ({ playerId: p.playerId, place: i+1 })), null, null)),
             ).then(refreshMatches)} isDisabled={!inProgress.length}
             >
               Finish All

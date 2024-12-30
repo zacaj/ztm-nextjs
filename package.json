@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint",
     "cypress:open": "cypress open",
     "db:seed": "npx prisma seed",
     "db:reset": "npx prisma migrate reset",

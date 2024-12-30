@@ -45,7 +45,7 @@ export class LiveTestDb {
   async setup() {
     if (this.isSetup) return false;
     const setupStart = new Date();
-    this.container = await new PostgreSqlContainer('postgres').start();
+    this.container = await new PostgreSqlContainer(`postgres`).start();
     this.client = new Client({
       host: this.container.getHost(),
       port: this.container.getPort(),
@@ -62,11 +62,11 @@ export class LiveTestDb {
       const migrationResult = execSync(
         `export DATABASE_URL=${this.testDbUrl} && npx prisma migrate deploy | grep -v "Applying migration" | grep -v "+- " | grep -v "The following migrations"`,
         {
-          stdio: 'inherit',
-          encoding: 'utf-8',
+          stdio: `inherit`,
+          encoding: `utf-8`,
         },
       );
-      if (migrationResult) console.log('Prisma output: ' + migrationResult);
+      if (migrationResult) console.log(`Prisma output: ` + migrationResult);
 
       console.info(
         `Setup live test db in ${(new Date().getTime() - setupStart.getTime()) / 1000}s.  (Create DB took  ${
@@ -82,7 +82,7 @@ export class LiveTestDb {
       this.isSetup = true;
       return true;
     } catch (err: unknown) {
-      console.error('Error setting up live db testing db:', err);
+      console.error(`Error setting up live db testing db:`, err);
       await this.shutdown();
       throw err;
     }
@@ -109,14 +109,14 @@ export class LiveTestDb {
   get prisma() {
     if (!this._prisma) {
       this._prisma = new PrismaClient({
-        datasources: { db: { url: this.testDbUrl } },
+        datasources: { db: { url: this.testDbUrl }},
       });
 
       const prisma = this._prisma as any;
       // spy on modification of db
-      for (const func of ['create', 'createMany', 'delete', 'deleteMany', 'update', 'updateMany', 'upsert']) {
+      for (const func of [`create`, `createMany`, `delete`, `deleteMany`, `update`, `updateMany`, `upsert`]) {
         for (const table of Object.values(this._prisma)) {
-          if (table && typeof table === 'object' && func in table) {
+          if (table && typeof table === `object` && func in table) {
             const originalFunction = table[func];
             table[func] = (...args: any[]) => {
               this.dbModifications++;
@@ -125,10 +125,10 @@ export class LiveTestDb {
           }
         }
       }
-      for (const func of ['$executeRaw', '$executeRawUnsafe', '$queryRaw', '$queryRawUnsafe']) {
+      for (const func of [`$executeRaw`, `$executeRawUnsafe`, `$queryRaw`, `$queryRawUnsafe`]) {
         const originalFunction: any = prisma[func];
         prisma[func] = (...args: any[]) => {
-          if (typeof args[0] !== 'string' || !args[0].startsWith('SET LOCAL')) this.dbModifications++;
+          if (typeof args[0] !== `string` || !args[0].startsWith(`SET LOCAL`)) this.dbModifications++;
           return Reflect.apply(originalFunction, this._prisma, args);
         };
       }

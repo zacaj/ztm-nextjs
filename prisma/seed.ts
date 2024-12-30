@@ -27,12 +27,25 @@ function genPlayers() {
 }
 
 async function main() {
+  await prisma.user.create({
+    data: {
+      id: `zacaj`,
+      sessions: {
+        create: {
+          id: `zacaj`,
+          expiresAt: null,
+        },
+      },
+    },
+  });
+
   {
     const t = await prisma.tournament.create({
       data: {
         name: ``,
         maxPlayers: 2,
         type: `FRENZY`,
+        creatorId: `zacaj`,
         games: { createMany: { data: genGames() }},
         players: { createMany: { data: genPlayers() }},
       },
@@ -62,6 +75,7 @@ async function main() {
         name: ``,
         maxPlayers: 3,
         type: `MATCHPLAY`,
+        creatorId: `zacaj`,
         games: { createMany: { data: genGames() }},
         players: { createMany: { data: genPlayers() }},
       },

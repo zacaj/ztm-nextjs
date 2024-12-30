@@ -1,6 +1,6 @@
 
-import { Box, styled as cstyled, Flex, Spinner, SystemStyleObject } from "@chakra-ui/react";
-import { FC as _FC, CSSProperties, PropsWithChildren, useCallback, useEffect, useMemo, useState, type ReactElement } from "react";
+import { styled as cstyled, Flex, Spinner, SystemStyleObject } from "@chakra-ui/react";
+import { FC as _FC, CSSProperties, PropsWithChildren, useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 
 type FlexProps = PropsWithChildren<
@@ -161,52 +161,6 @@ export function usePlayer(tour: TourBase) {
   const player = hasMounted? tour.players.find(p => p.id === playerId) : undefined;
   return { player, setPlayerId };
 }
-
-const TabWrapper = style(FlexCol, {});
-const TabBar = style(FlexRow, { flexWrap: `wrap`, justifyContent: `stretch`, backgroundColor: `#FFF`, gap: `3px`, marginBottom: `0.75rem` });
-const TabContent = style(FlexCol, { justifyContent: `stretch` });
-const _Tab: FCc<{ selected: boolean; onClick: () => void }> = ({ children, selected, onClick, ...props }) =>
-  <Box
-    style={{ borderColor: selected? `blue` : undefined }}
-    onClick={onClick}
-    {...props}
-  >{children}</Box>;
-const Tab = style(_Tab, { alignItems: `center`, borderBottom: `2px solid #999`, padding: `0.2rem 0.5rem` });
-
-export type Tab = {
-  name: string;
-  component: ReactElement;
-  id?: string;
-  isHidden?: boolean;
-};
-
-export const Tabs: FC<{
-  tabs: Tab[];
-  queryParam?: string;
-}> = (props) => {
-  const [curTab, setCurTab] = useQueryParam(props.queryParam ?? `tab`);
-
-  const tabIds = useMemo(() => props.tabs.map(t => t.id ?? t.name), [props.tabs]);
-  useEffect(() => {
-    if (!tabIds.includes(curTab!))
-      setCurTab(tabIds[0]);
-  }, [curTab, setCurTab, tabIds]);
-  return <TabWrapper>
-    <TabBar className={props.className}>
-      {props.tabs.filter(t => !t.isHidden).map(t =>
-        <Tab key={t.id ?? t.name}
-          selected={(t.id??t.name)===curTab}
-          onClick={() => setCurTab(t.id ?? t.name)}
-        >{t.name}</Tab>)}
-    </TabBar>
-    {props.tabs.filter(t => !t.isHidden).map(t =>
-      <TabContent key={t.id ?? t.name}
-        style={{ display: (t.id ?? t.name) === curTab? undefined : `none` }}
-      >
-        {t.component}
-      </TabContent>)}
-  </TabWrapper>;
-};
 
 export function LoadingError({ err }: { err?: any }) {
   if (err)

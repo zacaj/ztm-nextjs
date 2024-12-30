@@ -31,6 +31,13 @@ export async function editPlayer({ id, ...data }: Partial<Player>&Pick<Player, `
   });
 }
 
+export async function editTournament({ id, ...data }: Partial<Pick<Tournament, `gamesPerRound`|`maxPlayers`|`running`|`name`>>&Pick<Tournament, `id`>) {
+  await prisma.tournament.update({
+    where: { id },
+    data,
+  });
+}
+
 export async function addPlayer({ ...data }: Prisma.PlayerUncheckedCreateInput) {
   await prisma.player.create({
     data,
@@ -64,7 +71,7 @@ export async function getMatches(tournamentId: bigint, where?: Prisma.MatchWhere
   };
 }
 
-export async function saveMatchResults(matchId: bigint, results: { playerId: bigint; place: number | null }[]) {
+export async function saveMatchResults(matchId: bigint, results: { playerId: bigint; place: number | null }[], submittedByPlayerId: bigint | null, submittedByUserId: string | null) {
   const match = await prisma.match.findUniqueOrThrow({
     where: { id: matchId },
     include: {
@@ -89,6 +96,8 @@ export async function saveMatchResults(matchId: bigint, results: { playerId: big
           },
           data: {
             place: r.place,
+            submittedByPlayerId,
+            submittedByUserId,
           },
         })),
       },
