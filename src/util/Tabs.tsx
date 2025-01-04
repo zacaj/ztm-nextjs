@@ -1,6 +1,6 @@
 import { Box } from "@chakra-ui/react";
 import { type ReactElement, useMemo, useEffect } from "react";
-import { style, FlexCol, FlexRow, type FCc, undefined, type FC, useQueryParam } from "./react";
+import { style, FlexCol, FlexRow, type FCc, type FC, useQueryParam } from "./react";
 
 const TabWrapper = style(FlexCol, {});
 export const TabBar = style(FlexRow, {
@@ -15,11 +15,11 @@ export const TabBar = style(FlexRow, {
   zIndex: 100,
 });
 const TabContent = style(FlexCol, { justifyContent: `stretch` });
-const _Tab: FCc<{ selected: boolean; onClick: () => void; }> = ({ children, selected, onClick, ...props }) => <Box
+const _Tab: FCc<{ selected: boolean; onClick: () => void }> = ({ children, selected, onClick, ...props }) => <Box
   style={{ borderColor: selected ? `blue` : undefined }}
   onClick={onClick}
   {...props}
->{children}</Box>;
+                                                                                                              >{children}</Box>;
 const Tab = style(_Tab, { alignItems: `center`, borderBottom: `2px solid #999`, padding: `0.2rem 0.5rem 0` });
 
 export type Tab = {
@@ -45,11 +45,11 @@ export const Tabs: FC<{
       {props.tabs.filter(t => !t.isHidden).map(t => <Tab key={t.id ?? t.name}
         selected={(t.id ?? t.name) === curTab}
         onClick={() => setCurTab(t.id ?? t.name)}
-      >{t.name}</Tab>)}
+                                                    >{t.name}</Tab>)}
     </TabBar>
     {props.tabs.filter(t => !t.isHidden).map(t => <TabContent key={t.id ?? t.name}
       style={{ display: (t.id ?? t.name) === curTab ? undefined : `none` }}
-    >
+                                                  >
       {t.component}
     </TabContent>)}
   </TabWrapper>;

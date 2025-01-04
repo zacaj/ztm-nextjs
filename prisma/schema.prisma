@@ -89,11 +89,13 @@ model MatchPlayer {
   matchId  BigInt
   player   Player @relation(fields: [playerId], references: [id])
   playerId BigInt
+  order  Int? // 1,2,3,4
 
   place  Int? // 1,2,3,4
   score  BigInt? // 14,456,340
   points Decimal? // 4-2-1-0
-  order  Int? // 1,2,3,4
+
+  completed DateTime?
 
   submittedByPlayer   Player? @relation(fields: [submittedByPlayerId], references: [id], name: "submittedBy")
   submittedByPlayerId BigInt?

@@ -2,7 +2,6 @@ import { PrismaClient } from '@prisma/client';
 import { PostgreSqlContainer, StartedPostgreSqlContainer } from '@testcontainers/postgresql';
 import { execSync } from 'child_process';
 import { Client } from 'pg';
-import { seedDb } from '../prisma/seed';
 
 export type SeedFn = (prisma: PrismaClient) => Promise<void>;
 
@@ -10,7 +9,7 @@ export type SeedFn = (prisma: PrismaClient) => Promise<void>;
 export class LiveTestDb {
   protected static instances = new Map<SeedFn | null, LiveTestDb>();
   // get a clean instance seeded with the provided data
-  static async getInstance(seedFn: SeedFn | null = seedDb) {
+  static async getInstance(seedFn: SeedFn | null) {
     let instance = LiveTestDb.instances.get(seedFn);
     if (!instance || instance.isDirty) {
       await instance?.shutdown();

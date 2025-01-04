@@ -24,7 +24,7 @@ export async function addGame({ ...data }: Prisma.GameUncheckedCreateInput) {
     data,
   });
 }
-export async function editPlayer({ id, ...data }: Partial<Player>&Pick<Player, `id`>) {
+export async function editPlayer({ id, ...data }: Partial<Pick<Player, `ifpa`|`name`>>&Pick<Player, `id`>) {
   await prisma.player.update({
     where: { id },
     data,
@@ -35,6 +35,30 @@ export async function editTournament({ id, ...data }: Partial<Pick<Tournament, `
   await prisma.tournament.update({
     where: { id },
     data,
+  });
+}
+
+export async function getTournaments(ageInDays = 3, where?: Prisma.TournamentWhereInput) {
+  return await prisma.tournament.findMany({
+    where: {
+      matches: {
+        some: {
+          created: {
+            lte: new Date(new Date().getTime()+ageInDays*1000*60*60*24),
+          },
+        },
+      },
+      ...where,
+    },
+    select: {
+      name: true,
+      id: true,
+      running: true,
+      type: true,
+    },
+    orderBy: {
+      id: `desc`
+    },
   });
 }
 
@@ -63,7 +87,7 @@ export async function getMatches(tournamentId: bigint, where?: Prisma.MatchWhere
           include: {
             player: true,
           },
-          orderBy: { id: `asc` },
+          orderBy: { order: `asc` },
         },
       },
     }),

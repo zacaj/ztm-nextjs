@@ -42,7 +42,7 @@ async function main() {
   {
     const t = await prisma.tournament.create({
       data: {
-        name: ``,
+        name: `Monthly Gig`,
         maxPlayers: 2,
         type: `FRENZY`,
         creatorId: `zacaj`,
@@ -60,19 +60,19 @@ async function main() {
         tournamentId: t.id,
         gameId: t.games.random().id,
         completed: new Date(),
-        players: { createMany: { data: t.players.slice().shuffle().slice(0, nPlayer).zip(seq(nPlayer, 1).shuffle()).map(([p, order]) => ({ playerId: p.id, place: order })) }},
+        players: { createMany: { data: t.players.slice().shuffle().slice(0, nPlayer).zip(seq(nPlayer, 1).shuffle()).map(([p, order], i) => ({ playerId: p.id, place: order, order: i+1 })) }},
       }});
     for (let i=0; i<3; i++)
       await prisma.match.create({ data: {
         tournamentId: t.id,
         gameId: t.games.random().id,
-        players: { createMany: { data: t.players.slice().shuffle().slice(0, nPlayer).map((p) => ({ playerId: p.id, place: null })) }},
+        players: { createMany: { data: t.players.slice().shuffle().slice(0, nPlayer).map((p, i) => ({ playerId: p.id, place: null, order: i+1 })) }},
       }});
   }
   {
     const t = await prisma.tournament.create({
       data: {
-        name: ``,
+        name: `Weekly MP`,
         maxPlayers: 3,
         type: `MATCHPLAY`,
         creatorId: `zacaj`,
@@ -93,14 +93,14 @@ async function main() {
           gameId: t.games.random().id,
           completed: new Date(),
           roundNum,
-          players: { createMany: { data: t.players.slice().shuffle().slice(0, nPlayer).zip(seq(nPlayer, 1).shuffle()).map(([p, order]) => ({ playerId: p.id, place: order })) }},
+          players: { createMany: { data: t.players.slice().shuffle().slice(0, nPlayer).zip(seq(nPlayer, 1).shuffle()).map(([p, order], i) => ({ playerId: p.id, place: order, order: i+1 })) }},
         }});
     for (let i=0; i<3; i++)
       await prisma.match.create({ data: {
         tournamentId: t.id,
         gameId: t.games.random().id,
         roundNum,
-        players: { createMany: { data: t.players.slice().shuffle().slice(0, nPlayer).map((p) => ({ playerId: p.id, place: null })) }},
+        players: { createMany: { data: t.players.slice().shuffle().slice(0, nPlayer).map((p, i) => ({ playerId: p.id, place: null, order: i+1 })) }},
       }});
   }
 }
